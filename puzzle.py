@@ -56,13 +56,13 @@ class Puzzle:
 
         for action in legal_actions:
             new_state = self.state.copy()
-            if action is 'U':
+            if action == 'U':
                 new_state[x], new_state[x-3] = new_state[x-3], new_state[x]
-            elif action is 'D':
+            elif action == 'D':
                 new_state[x], new_state[x+3] = new_state[x+3], new_state[x]
-            elif action is 'L':
+            elif action == 'L':
                 new_state[x], new_state[x-1] = new_state[x-1], new_state[x]
-            elif action is 'R':
+            elif action == 'R':
                 new_state[x], new_state[x+1] = new_state[x+1], new_state[x]
             children.append(Puzzle(new_state,self,action,1,self.needs_hueristic))
         return children
