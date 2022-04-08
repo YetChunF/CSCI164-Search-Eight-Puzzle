@@ -5,7 +5,7 @@ from time import time
 from BFS import breadth_first_search
 from DFS import depth_first_search
 from AS_search import Astar_search
-from puzzle import Puzzle
+from Node import Puzzle
 
 
 state = [[1, 3, 4,

@@ -1,5 +1,5 @@
 from queue import PriorityQueue
-from puzzle import Puzzle
+from Node import Puzzle
 
 
 def Astar_search(initial_state):

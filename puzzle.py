@@ -1,79 +1,100 @@
-class Puzzle:
-    goal_state=[0,1,2,3,4,5,6,7,8]
-    heuristic=None
-    evaluation_function=None
-    needs_hueristic=False
-    num_of_instances=0
-    def __init__(self,state,parent,action,path_cost,needs_hueristic=False):
-        self.parent=parent
-        self.state=state
-        self.action=action
-        if parent:
-            self.path_cost = parent.path_cost + path_cost
-        else:
-            self.path_cost = path_cost
-        if needs_hueristic:
-            self.needs_hueristic=True
-            self.generate_heuristic()
-            self.evaluation_function=self.heuristic+self.path_cost
-        Puzzle.num_of_instances+=1
+from lib2to3.pytree import Node
+import math
+from Node import node 
 
-    def __str__(self):
-        return str(self.state[0:3])+'\n'+str(self.state[3:6])+'\n'+str(self.state[6:9])
+class puzzle():
 
-    def generate_heuristic(self):
-        self.heuristic=0
-        for num in range(1,9):
-            distance=abs(self.state.index(num) - self.goal_state.index(num))
-            i=int(distance/3)
-            j=int(distance%3)
-            self.heuristic=self.heuristic+i+j
 
-    def goal_test(self):
-        if self.state == self.goal_state:
-            return True
-        return False
+	actionDict = {"L":"R", "R":"L", "U":"D", "D":"U"}
 
-    @staticmethod
-    def find_legal_actions(i,j):
-        legal_action = ['U', 'D', 'L', 'R']
-        if i == 0:  # up is disable
-            legal_action.remove('U')
-        elif i == 2:  # down is disable
-            legal_action.remove('D')
-        if j == 0:
-            legal_action.remove('L')
-        elif j == 2:
-            legal_action.remove('R')
-        return legal_action
+	def __init__(self, initial, goal):
+		self.initial = initial[:]
+		self.boardSize = math.sqrt(len(goal))
+		self.goalState = goal[:]
 
-    def generate_child(self):
-        children=[]
-        x = self.state.index(0)
-        i = int(x / 3)
-        j = int(x % 3)
-        legal_actions=self.find_legal_actions(i,j)
+	def isGoal(self, state) -> bool:
+		return ''.join(state) == ''.join(self.goalState)
 
-        for action in legal_actions:
-            new_state = self.state.copy()
-            if action == 'U':
-                new_state[x], new_state[x-3] = new_state[x-3], new_state[x]
-            elif action == 'D':
-                new_state[x], new_state[x+3] = new_state[x+3], new_state[x]
-            elif action == 'L':
-                new_state[x], new_state[x-1] = new_state[x-1], new_state[x]
-            elif action == 'R':
-                new_state[x], new_state[x+1] = new_state[x+1], new_state[x]
-            children.append(Puzzle(new_state,self,action,1,self.needs_hueristic))
-        return children
+	def action_cost(self, state, action, newState) -> int:
+		return 1
 
-    def find_solution(self):
-        solution = []
-        solution.append(self.action)
-        path = self
-        while path.parent != None:
-            path = path.parent
-            solution.append(path.action)
-        solution = solution[:-1]
-        solution.reverse()
-        return solution
+	def expandNode(self, node):
+		retList = []
+		for act in puzzle.actionDict.keys():
+			tempList = list(node.state)
+			puzzle.executeAction(tempList, act, node.zeroIndex)
+			cost = node.path_cost + self.action_cost(node.state, act, tempList)
+			retList.append(Node(tempList, node, act, cost, tempList.index("0")))
+		return retList
+
+	def printSolutionMetrics(node, expandedNodes, functionName, originalState):
+		nodePath = puzzle.buildNodePath(node)
+
+		print(f'{"Function Name: ":22}', functionName)
+		print(f'{"Final State: ":22}', ''.join(node.state))
+		print(f'{"Nodes Expanded: ":22}', expandedNodes)
+		if node.state != "Failure":
+			print(f'{"Action Set: ":22}', ''.join(nodePath))
+			print(f'{"Path Cost: ":22}', len(nodePath))
+			print(f'{"Original State: ":22}', originalState)
+			finalState = list(originalState)
+			puzzle.executeActionList(finalState, nodePath)
+			print(f'{"Path Verification":22}', ''.join(finalState))
+
+
+	def buildNodePath(node):
+		nodePath = [node.action]
+		tempNode = node.parent
+		while tempNode != None:
+			nodePath.append(tempNode.action)
+			tempNode = tempNode.parent
+
+		nodePath.reverse()
+		return nodePath 
+
+
+	# Used to get the reversed Move sequence from a given sequence
+	def getInvertedActions(actions):
+		retList = []
+		for act in actions:
+			retList.append(puzzle.actionDict.get(act))
+		retList.reverse()
+		return retList
+
+
+	"""
+		All functions below are for executing Move Sequences on an Entered Puzzle State
+	"""
+	def executeActionList(state, actions):
+		for act in ''.join(actions).lower():
+			puzzle.executeAction(state, act, state.index("0"))
+
+	def executeAction(state, action, zIndex):
+		boardSize = int(math.sqrt(len(state)))
+		if puzzle.isValidMove(state, action, zIndex):
+			if action == "U":
+				puzzle.swap(zIndex, zIndex - boardSize, state)
+			elif action == "D":
+				puzzle.swap(zIndex, zIndex + boardSize, state)
+			elif action == "L":
+				puzzle.swap(zIndex, zIndex - 1, state)
+			elif action == "R":
+				puzzle.swap(zIndex, zIndex + 1, state)
+
+	def isValidMove(state, action, zIndex):	
+		if not puzzle.actionDict.get(action):
+			return False
+		boardSize = int(math.sqrt(len(state)))
+		if action == "U":
+			return zIndex > (boardSize - 1)
+		elif action == "D":
+			return (zIndex//boardSize) < (boardSize - 1)
+		elif action == "L":
+			return (zIndex%boardSize) > 0
+		elif action == "R":
+			return zIndex%boardSize < (boardSize - 1)
+
+	def swap(zIndex, moveToIndex, state):
+		temp = state[moveToIndex]
+		state[moveToIndex] = state[zIndex]
+		state[zIndex] = temp
