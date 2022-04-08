@@ -5,19 +5,19 @@ import queue
 
 
 def breath_first_search(initial_state):
-    node = Node(puzzle.initial[:], None, "", 0, puzzle.initial.index("0"))
+    NNode = node(initial_state.initial[:], None, "", 0, initial_state.initial.index("0"))
     frontier = queue.Queue(0)
-    frontier.put(node)
-    reached = {''.join(node.state): True}
+    frontier.put(NNode)
+    reached = {''.join(NNode.state): True}
     nodesExpanded = 0
     while not frontier.empty():
-        node = frontier.get()
+        NNode = frontier.get()
         nodesExpanded += 1
-        for child in puzzle.expandNode(node):
+        for child in initial_state.expandNode(NNode):
             hState = ''.join(child.state)
-            if puzzle.isGoal(child.state):
+            if initial_state.isGoal(child.state):
                 return (child, nodesExpanded)
             if not reached.get(hState):
                 reached[hState] = True
                 frontier.put(child)
-    return(Node("Failure", None, None, None, None), nodesExpanded)
+    return(NNode("Failure", None, None, None, None), nodesExpanded)
