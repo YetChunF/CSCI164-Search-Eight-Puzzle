@@ -107,21 +107,25 @@ def astar_oop(puzz: puzzle) -> list[str]:
     curr_node = puzz.get_state()
     frontier = priority.PQ()
     frontier.push(curr_node, puzzle.ooph(curr_node, puzz.goal))
-    explored = set()
     parent_map = {curr_node: ""}
+    path_costs = {curr_node: 0}
+    explored = set()
+    num_explored = 0
     while not frontier.is_mt():
         curr_node, curr_cost = frontier.pop()
+        num_explored += 1
         print(curr_node, curr_cost)
         explored.add(curr_node)
         if curr_node == puzz.goal:
-            return parent_map
+            return parent_map, num_explored
         for child_node, op in puzzle.get_neighbors(curr_node):
-            new_path_cost = curr_cost + 1 + puzzle.ooph(child_node, puzz.goal)
+            path_costs[child_node] = path_costs[curr_node] + 1
+            priority_cost = path_costs[child_node] + puzzle.ooph(child_node, puzz.goal)
             if (not child_node in explored) and (not frontier.is_in(child_node)):
-                frontier.push(child_node, new_path_cost)
+                frontier.push(child_node, priority_cost)
                 parent_map[child_node] = op
-            elif (frontier.is_in(child_node)) and (frontier.get_cost(child_node) > new_path_cost):
-                frontier.set_cost(child_node, new_path_cost)
+            elif (frontier.is_in(child_node)) and (frontier.get_cost(child_node) > priority_cost):
+                frontier.set_cost(child_node, priority_cost)
                 parent_map[child_node] = op
 
 # A* with Manhattan Distance heuristic
@@ -129,11 +133,11 @@ def astar_man_dist(puzz: puzzle):
     pass
 
 puzz = puzzle("160273485", "012345678")
-pmap = astar_oop(puzz)
+pmap, num_explored = astar_oop(puzz)
+print(f"Nodes explored: {num_explored}")
 move_list = []
 curr = "012345678"
 while pmap[curr] != "":
-    print(curr, pmap[curr])
     move_list.append(pmap[curr])
     curr = puzzle.get_prev(curr, pmap[curr])
 move_list.reverse()
