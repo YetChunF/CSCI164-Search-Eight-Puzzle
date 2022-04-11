@@ -8,7 +8,7 @@ BACKGROUND_COLOR = (0, 0, 0)
 TILE_COLOR = (218, 182, 150)
 FONT_COLOR = (67, 38, 29)
 TILE_SIZE = 50
-FRAME_RATE = 500
+FRAME_RATE = 200
 
 class puzzle:
     def __init__(self, initial_state: str, goal_state: str) -> None:
@@ -68,45 +68,76 @@ class puzzle:
         if space_pos + boardSize < len(state):
             new_state = [c for c in state]
             (new_state[space_pos], new_state[space_pos + boardSize]) = (new_state[space_pos + boardSize], new_state[space_pos])
-            possible_states.append("".join(new_state))
+            possible_states.append(("".join(new_state), "D"))
         if space_pos - boardSize >= 0:
             new_state = [c for c in state]
             (new_state[space_pos], new_state[space_pos - boardSize]) = (new_state[space_pos - boardSize], new_state[space_pos])
-            possible_states.append("".join(new_state))
+            possible_states.append(("".join(new_state), "U"))
         if space_pos % boardSize < boardSize - 1:
             new_state = [c for c in state]
             (new_state[space_pos], new_state[space_pos + 1]) = (new_state[space_pos + 1], new_state[space_pos])
-            possible_states.append("".join(new_state))
+            possible_states.append(("".join(new_state), "R"))
         if space_pos % boardSize > 0:
             new_state = [c for c in state]
             (new_state[space_pos], new_state[space_pos - 1]) = (new_state[space_pos - 1], new_state[space_pos])
-            possible_states.append("".join(new_state))
+            possible_states.append(("".join(new_state), "L"))
         return possible_states
+        # Gets all neighbors for a specified state.
+    @staticmethod
+    def get_prev(state: str, choice: str) -> list[str]:
+        space_pos = state.index("0")
+        boardSize = int((len(state))**(1/2))
+        new_state = [c for c in state]
+        if (choice == "U") and (space_pos + boardSize < len(state)):
+            (new_state[space_pos], new_state[space_pos + boardSize]) = (new_state[space_pos + boardSize], new_state[space_pos])
+        if (choice == "D") and (space_pos - boardSize >= 0):
+            (new_state[space_pos], new_state[space_pos - boardSize]) = (new_state[space_pos - boardSize], new_state[space_pos])
+        if (choice == "L") and (space_pos % boardSize < boardSize - 1):
+            (new_state[space_pos], new_state[space_pos + 1]) = (new_state[space_pos + 1], new_state[space_pos])
+        if (choice == "R") and (space_pos % boardSize > 0):
+            (new_state[space_pos], new_state[space_pos - 1]) = (new_state[space_pos - 1], new_state[space_pos])
+        return "".join(new_state)
+    # Calculates the out of place heuristic function.
+    @staticmethod
+    def ooph(state: str, goal: str) -> int:
+        return sum(list(map(lambda a, b: (1 if a == b else 0), state, goal)))
 
 # A* with Out-Of-Place heuristic
 def astar_oop(puzz: puzzle) -> list[str]:
     curr_node = puzz.get_state()
     frontier = priority.PQ()
-    frontier.push(curr_node, 0)
+    frontier.push(curr_node, puzzle.ooph(curr_node, puzz.goal))
     explored = set()
+    parent_map = {curr_node: ""}
     while not frontier.is_mt():
         curr_node, curr_cost = frontier.pop()
+        print(curr_node, curr_cost)
         explored.add(curr_node)
         if curr_node == puzz.goal:
-            return explored
-        for child_node in puzzle.get_neighbors(curr_node):
-            new_path_cost = curr_cost + 1
+            return parent_map
+        for child_node, op in puzzle.get_neighbors(curr_node):
+            new_path_cost = curr_cost + 1 + puzzle.ooph(child_node, puzz.goal)
             if (not child_node in explored) and (not frontier.is_in(child_node)):
                 frontier.push(child_node, new_path_cost)
+                parent_map[child_node] = op
             elif (frontier.is_in(child_node)) and (frontier.get_cost(child_node) > new_path_cost):
                 frontier.set_cost(child_node, new_path_cost)
+                parent_map[child_node] = op
 
 # A* with Manhattan Distance heuristic
 def astar_man_dist(puzz: puzzle):
     pass
 
-moves = "DDRRUULLDRUDDULU"
-move_list = [c for c in moves]
+puzz = puzzle("160273485", "012345678")
+pmap = astar_oop(puzz)
+move_list = []
+curr = "012345678"
+while pmap[curr] != "":
+    print(curr, pmap[curr])
+    move_list.append(pmap[curr])
+    curr = puzzle.get_prev(curr, pmap[curr])
+move_list.reverse()
+print(move_list)
 
 if __name__ == "__main__":
     pygame.init()
@@ -117,14 +148,11 @@ if __name__ == "__main__":
     sysfont = pygame.font.get_default_font()
     font = pygame.font.SysFont(None, 48)
 
-    puzz = puzzle("160273485", "012345678")
-    print(astar_oop(puzz))
     puzz.draw(screen)
 
     pygame.display.update()
 
     ticks = pygame.time.get_ticks()
-
     running = True
     while running:
         for event in pygame.event.get():
