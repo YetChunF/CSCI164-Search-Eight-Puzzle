@@ -61,7 +61,7 @@ class puzzle:
             screen.blit(tile, (BOARD_PADDING + j * TILE_SIZE, BOARD_PADDING + i * TILE_SIZE))
     # Gets all neighbors for a specified state.
     @staticmethod
-    def get_neighbors(state: str) -> list[str]:
+    def get_neighbors(state: str):
         space_pos = state.index("0")
         boardSize = int((len(state))**(1/2))
         possible_states = []
@@ -84,7 +84,7 @@ class puzzle:
         return possible_states
         # Gets all neighbors for a specified state.
     @staticmethod
-    def get_prev(state: str, choice: str) -> list[str]:
+    def get_prev(state: str, choice: str):
         space_pos = state.index("0")
         boardSize = int((len(state))**(1/2))
         new_state = [c for c in state]
@@ -103,7 +103,7 @@ class puzzle:
         return sum(list(map(lambda a, b: (1 if a == b else 0), state, goal)))
 
 # A* with Out-Of-Place heuristic
-def astar_oop(puzz: puzzle) -> list[str]:
+def astar_oop(puzz: puzzle):
     curr_node = puzz.get_state()
     frontier = priority.PQ()
     frontier.push(curr_node, puzzle.ooph(curr_node, puzz.goal))
