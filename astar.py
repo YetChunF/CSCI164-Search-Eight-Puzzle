@@ -1,4 +1,5 @@
 import pygame
+import priority
 
 SCREEN_HEIGHT = 400
 SCREEN_WIDTH =  400
@@ -10,9 +11,9 @@ TILE_SIZE = 50
 FRAME_RATE = 500
 
 class puzzle:
-    def __init__(self, initial_state: str, goal_state: str):
+    def __init__(self, initial_state: str, goal_state: str) -> None:
         self.state = [c for c in initial_state]
-        self.goal = [c for c in goal_state]
+        self.goal = goal_state
         self.boardSize = int((len(self.state))**(1/2))
         self.space_pos = self.state.index("0")
     # Swaps two values in the state list
@@ -37,8 +38,11 @@ class puzzle:
         else:
             if verbose:
                 print(f"That's an illegal move, sir. Attempted move: {choice}")
+        return self.get_state()
+    # Returns current board state as a string
+    def get_state(self) -> str:
         return "".join(self.state)
-    # Prints ascii version of the board to console.
+    # Prints ascii version of the board state to console.
     def print_ascii(self) -> None:
         for i in range(self.boardSize):
             for j in range(self.boardSize):
@@ -80,8 +84,22 @@ class puzzle:
         return possible_states
 
 # A* with Out-Of-Place heuristic
-def astar_oop(puzz: puzzle):
-    pass
+def astar_oop(puzz: puzzle) -> list[str]:
+    curr_node = puzz.get_state()
+    frontier = priority.PQ()
+    frontier.push(curr_node, 0)
+    explored = set()
+    while not frontier.is_mt():
+        curr_node, curr_cost = frontier.pop()
+        explored.add(curr_node)
+        if curr_node == puzz.goal:
+            return explored
+        for child_node in puzzle.get_neighbors(curr_node):
+            new_path_cost = curr_cost + 1
+            if (not child_node in explored) and (not frontier.is_in(child_node)):
+                frontier.push(child_node, new_path_cost)
+            elif (frontier.is_in(child_node)) and (frontier.get_cost(child_node) > new_path_cost):
+                frontier.set_cost(child_node, new_path_cost)
 
 # A* with Manhattan Distance heuristic
 def astar_man_dist(puzz: puzzle):
@@ -99,7 +117,8 @@ if __name__ == "__main__":
     sysfont = pygame.font.get_default_font()
     font = pygame.font.SysFont(None, 48)
 
-    puzz = puzzle("012345678", "012345678")
+    puzz = puzzle("160273485", "012345678")
+    print(astar_oop(puzz))
     puzz.draw(screen)
 
     pygame.display.update()
