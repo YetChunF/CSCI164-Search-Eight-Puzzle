@@ -100,7 +100,8 @@ class puzzle:
     # Calculates the out of place heuristic function.
     @staticmethod
     def ooph(state: str, goal: str) -> int:
-        return sum(list(map(lambda a, b: (1 if a == b else 0), state, goal)))
+        return sum(list(map(lambda a, b: int(a==b), state, goal)))
+
 
 # A* with Out-Of-Place heuristic
 def astar_oop(puzz: puzzle):
@@ -114,7 +115,8 @@ def astar_oop(puzz: puzzle):
     while not frontier.is_mt():
         curr_node, curr_cost = frontier.pop()
         num_explored += 1
-        print(curr_node, curr_cost)
+        if num_explored % 1000 == 0:
+            print(curr_node, curr_cost)
         explored.add(curr_node)
         if curr_node == puzz.goal:
             return parent_map, num_explored
