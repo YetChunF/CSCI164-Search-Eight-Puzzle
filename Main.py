@@ -6,16 +6,17 @@ import DFS
 def main():
      
     GoalState = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+    GoalState2 = "1234567890ABCDEF" #For 15 Puzzle 
 
     #Obtain information from calling parameters
     parser = argparse.ArgumentParser()
-    parser.add_argument('method')
-    parser.add_argument('initialBoard')
+    parser.add_argument('Algorithm Selected')
+    parser.add_argument('Initial State')
     args = parser.parse_args()
     data = args.initialBoard.split(",")
 
     #Build initial board state
-    InitialState = []
+    InitialState = [] #Take in 8 data 
     InitialState.append(int(data[0]))
     InitialState.append(int(data[1]))
     InitialState.append(int(data[2]))
@@ -46,9 +47,9 @@ def main():
             bfsNode = bfsNode.parent
 
         #Print results
-        print("path: ", bfsMoves)
-        print("cost: ", len(bfsMoves))
-        print("nodes expanded: ", BFS.numberOfPaths)
+        print("Path: ", bfsMoves)
+        print("Cost: ", len(bfsMoves))
+        print("Nodes expanded: ", BFS.numberOfPaths)
 
     elif(function == "dfs"):
         DFS.depth_first_search(InitialState, GoalState)
@@ -68,9 +69,9 @@ def main():
             dfsNode = dfsNode.parent
 
         #Print results.
-        print("path: ", dfsMoves)
-        print("cost: ", len(dfsMoves))
-        print("nodes expanded: ", DFS.numberOfNodes)
+        print("Path: ", dfsMoves)
+        print("Cost: ", len(dfsMoves))
+        print("Nodes Expanded: ", DFS.numberOfNodes)
 
     # if(function=="ast"):
     #     ast(InitialState) 
