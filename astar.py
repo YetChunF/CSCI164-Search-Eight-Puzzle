@@ -38,7 +38,7 @@ class puzzle:
             if verbose:
                 print(f"That's an illegal move, sir. Attempted move: {choice}")
         return "".join(self.state)
-    # Prints ascii version of the board.
+    # Prints ascii version of the board to console.
     def print_ascii(self) -> None:
         for i in range(self.boardSize):
             for j in range(self.boardSize):
