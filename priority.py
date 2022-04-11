@@ -12,7 +12,7 @@ class PQ:
             return
         self.queue.append(name)
         self.cost_map[name] = cost
-    def pop(self) -> tuple[str, float]:
+    def pop(self):
         if self.is_mt():
             return None
         min_name, min_cost = min(self.cost_map.items(), key=lambda x: x[1])
