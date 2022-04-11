@@ -1,23 +1,25 @@
-from lib2to3.pytree import Node
-from puzzle import puzzle
-from Node import node
-import queue
+from Puzzle import PuzzleState
+from collections import deque
+from Actions import subNodes
 
 
-def breath_first_search(initial_state):
-    NNode = node(initial_state.initial[:], None, "", 0, initial_state.initial.index("0"))
-    frontier = queue.Queue(0)
-    frontier.put(NNode)
-    reached = {''.join(NNode.state): True}
-    nodesExpanded = 0
-    while not frontier.empty():
-        NNode = frontier.get()
-        nodesExpanded += 1
-        for child in initial_state.expandNode(NNode):
-            hState = ''.join(child.state)
-            if initial_state.isGoal(child.state):
-                return (child, nodesExpanded)
-            if not reached.get(hState):
-                reached[hState] = True
-                frontier.put(child)
-    return(NNode("Failure", None, None, None, None), nodesExpanded)
+def breath_first_search(startState, goalState):
+
+    global GoalNode, numberOfPaths
+
+    boardVisited= set()
+    Queue = deque([PuzzleState(startState, None, None, 0, 0, 0)])
+    numberOfPaths = 0
+
+    while Queue:
+        node = Queue.popleft()
+        boardVisited.add(node.map)
+        if node.state == goalState:
+            GoalNode = node
+            return Queue
+        possiblePaths = subNodes(node)
+        numberOfPaths += 1
+        for path in possiblePaths:
+            if path.map not in boardVisited:
+                Queue.append(path)
+                boardVisited.add(path.map)
