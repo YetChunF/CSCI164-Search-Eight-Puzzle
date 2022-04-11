@@ -6,12 +6,11 @@ import DFS
 def main():
      
     GoalState = [0, 1, 2, 3, 4, 5, 6, 7, 8]
-    GoalState2 = "1234567890ABCDEF" #For 15 Puzzle 
-
+    
     #Obtain information from calling parameters
     parser = argparse.ArgumentParser()
-    parser.add_argument('Algorithm Selected')
-    parser.add_argument('Initial State')
+    parser.add_argument('method')
+    parser.add_argument('initialBoard')
     args = parser.parse_args()
     data = args.initialBoard.split(",")
 
