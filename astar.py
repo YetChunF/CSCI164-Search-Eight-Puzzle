@@ -1,4 +1,3 @@
-from numpy import tile
 import pygame
 import priority
 import math
@@ -11,13 +10,12 @@ TILE_COLOR = (218, 182, 150)
 FONT_COLOR = (67, 38, 29)
 TILE_SIZE = 70
 FRAME_RATE = 200
-END_STATE = "012345678"
 
 class puzzle:
     def __init__(self, initial_state: str, goal_state: str) -> None:
         self.state = [c for c in initial_state]
         self.goal = goal_state
-        self.boardSize = int((len(self.state))**(1/2))
+        self.boardSize = int(math.sqrt(len(self.state)))
         self.space_pos = self.state.index("0")
     # Swaps two values in the state list
     def __swap(self, index_1: int, index_2: int) -> None:
@@ -54,8 +52,8 @@ class puzzle:
     # Draws the board on the specified screen.
     def draw(self, screen: pygame.Surface) -> None:
         for tile_index in range(len(self.state)):
-            i = int(tile_index / 3)
-            j = tile_index % 3
+            i = int(tile_index / self.boardSize)
+            j = tile_index % self.boardSize
             tile = pygame.Surface((TILE_SIZE, TILE_SIZE))
             tile.fill(TILE_COLOR)
             pygame.draw.rect(tile, FONT_COLOR, (0, 0, TILE_SIZE, TILE_SIZE), 1)
@@ -106,11 +104,12 @@ class puzzle:
         return sum(list(map(lambda a, b: int(a==b), state, goal)))
     @staticmethod
     def manh(state: str, goal: str) -> float:
+        boardSize = int((len(state))**(1/2))
         man_dist = 0
         for tile_source in range(len(state)):
-            source_i, source_j = int(tile_source / 3), tile_source % 3
+            source_i, source_j = int(tile_source / boardSize), tile_source % boardSize
             tile_dest = goal.index(state[tile_source])
-            dest_i, dest_j = int(tile_dest / 3), tile_dest % 3
+            dest_i, dest_j = int(tile_dest / boardSize), tile_dest % boardSize
             man_dist += math.sqrt((source_i - dest_i)**2 + (source_j - dest_j)**2)
         return man_dist
 
@@ -141,9 +140,11 @@ def astar(puzz: puzzle):
                 frontier.set_cost(child_node, priority_cost)
                 parent_map[child_node] = op
 
+# Iterative Deepening A*
+def id_astar(puzz: puzzle):
     pass
 
-all_puzzles = [
+small_puzzles = [
     "160273485",
     "462301587",
     "821574360",
@@ -164,6 +165,22 @@ all_puzzles = [
     "430621875",
     "158274036",
     "130458726"
+]
+
+four_board_ez = [
+    "16235A749C08DEBF",
+    "0634217859ABDEFC",
+    "012456379BC8DAEF",
+    "51246A38097BDEFC",
+    "12345678D9CFEBA0"
+]
+
+four_board_hard = [
+    "71A92CE03DB4658F",
+    "02348697DF5A1EBC",
+    "39A1D0EC7BF86452",
+    "EAB480FC19D56237",
+    "7DB13C52F46E80A9"
 ]
 
 if __name__ == "__main__":
@@ -192,14 +209,15 @@ if __name__ == "__main__":
                 m = move_list.pop(0)
                 puzz.move(m)
             else:
-                if all_puzzles:
-                    new_start_state = all_puzzles.pop()
-                    print(f"New puzzle started! Puzzle: {new_start_state}")
-                    puzz = puzzle(new_start_state, END_STATE)
+                if small_puzzles:
+                    new_start_state = small_puzzles.pop()
+                    new_end_state = "".join(sorted([c for c in new_start_state]))
+                    print(f"New puzzle started! Puzzle: {new_start_state} Goal: {new_end_state}")
+                    puzz = puzzle(new_start_state, new_end_state)
                     puzz.draw(screen)
                     pygame.display.update()
                     pmap, num_explored = astar(puzz)
-                    curr = END_STATE
+                    curr = new_end_state
                     while pmap[curr] != "":
                         move_list.append(pmap[curr])
                         curr = puzzle.get_prev(curr, pmap[curr])
