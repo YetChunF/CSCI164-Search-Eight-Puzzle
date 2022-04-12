@@ -1,14 +1,17 @@
+from numpy import tile
 import pygame
 import priority
+import math
 
-SCREEN_HEIGHT = 400
-SCREEN_WIDTH =  400
+SCREEN_HEIGHT = 500
+SCREEN_WIDTH =  500
 BOARD_PADDING = 120
 BACKGROUND_COLOR = (0, 0, 0)
 TILE_COLOR = (218, 182, 150)
 FONT_COLOR = (67, 38, 29)
-TILE_SIZE = 50
+TILE_SIZE = 70
 FRAME_RATE = 200
+END_STATE = "012345678"
 
 class puzzle:
     def __init__(self, initial_state: str, goal_state: str) -> None:
@@ -101,10 +104,18 @@ class puzzle:
     @staticmethod
     def ooph(state: str, goal: str) -> int:
         return sum(list(map(lambda a, b: int(a==b), state, goal)))
+    @staticmethod
+    def manh(state: str, goal: str) -> float:
+        man_dist = 0
+        for tile_source in range(len(state)):
+            source_i, source_j = int(tile_source / 3), tile_source % 3
+            tile_dest = goal.index(state[tile_source])
+            dest_i, dest_j = int(tile_dest / 3), tile_dest % 3
+            man_dist += math.sqrt((source_i - dest_i)**2 + (source_j - dest_j)**2)
+        return man_dist
 
-
-# A* with Out-Of-Place heuristic
-def astar_oop(puzz: puzzle):
+# A* Algorithm Implementation
+def astar(puzz: puzzle):
     curr_node = puzz.get_state()
     frontier = priority.PQ()
     frontier.push(curr_node, puzzle.ooph(curr_node, puzz.goal))
@@ -113,16 +124,16 @@ def astar_oop(puzz: puzzle):
     explored = set()
     num_explored = 0
     while not frontier.is_mt():
-        curr_node, curr_cost = frontier.pop()
+        curr_node, _ = frontier.pop()
         num_explored += 1
-        if num_explored % 1000 == 0:
-            print(curr_node, curr_cost)
+        if num_explored % 5000 == 0:
+            print(f"Explored {num_explored} nodes...")
         explored.add(curr_node)
         if curr_node == puzz.goal:
             return parent_map, num_explored
         for child_node, op in puzzle.get_neighbors(curr_node):
             path_costs[child_node] = path_costs[curr_node] + 1
-            priority_cost = path_costs[child_node] + puzzle.ooph(child_node, puzz.goal)
+            priority_cost = path_costs[child_node] + puzzle.manh(child_node, puzz.goal)
             if (not child_node in explored) and (not frontier.is_in(child_node)):
                 frontier.push(child_node, priority_cost)
                 parent_map[child_node] = op
@@ -130,20 +141,32 @@ def astar_oop(puzz: puzzle):
                 frontier.set_cost(child_node, priority_cost)
                 parent_map[child_node] = op
 
-# A* with Manhattan Distance heuristic
-def astar_man_dist(puzz: puzzle):
     pass
 
-puzz = puzzle("160273485", "012345678")
-pmap, num_explored = astar_oop(puzz)
-print(f"Nodes explored: {num_explored}")
-move_list = []
-curr = "012345678"
-while pmap[curr] != "":
-    move_list.append(pmap[curr])
-    curr = puzzle.get_prev(curr, pmap[curr])
-move_list.reverse()
-print(move_list)
+all_puzzles = [
+    "160273485",
+    "462301587",
+    "821574360",
+    "840156372",
+    "530478126",
+    "068314257",
+    "453207186",
+    "128307645",
+    "035684712",
+    "684317025",
+    "028514637",
+    "618273540",
+    "042385671",
+    "420385716",
+    "054672813",
+    "314572680",
+    "637218045",
+    "430621875",
+    "158274036",
+    "130458726"
+]
+
+start_state = "840156372"
 
 if __name__ == "__main__":
     pygame.init()
@@ -154,8 +177,8 @@ if __name__ == "__main__":
     sysfont = pygame.font.get_default_font()
     font = pygame.font.SysFont(None, 48)
 
-    puzz.draw(screen)
-
+    move_list = []
+    puzz = puzzle("012345678", "012345678")
     pygame.display.update()
 
     ticks = pygame.time.get_ticks()
@@ -167,10 +190,26 @@ if __name__ == "__main__":
         current_ticks = pygame.time.get_ticks()
         if current_ticks > ticks + FRAME_RATE:
             ticks = current_ticks
-            print(f"ticks: {ticks}")
             if move_list:
                 m = move_list.pop(0)
                 puzz.move(m)
+            else:
+                if all_puzzles:
+                    new_start_state = all_puzzles.pop()
+                    print(f"New puzzle started! Puzzle: {new_start_state}")
+                    puzz = puzzle(new_start_state, END_STATE)
+                    puzz.draw(screen)
+                    pygame.display.update()
+                    pmap, num_explored = astar(puzz)
+                    curr = END_STATE
+                    while pmap[curr] != "":
+                        move_list.append(pmap[curr])
+                        curr = puzzle.get_prev(curr, pmap[curr])
+                    move_list.reverse()
+                    print(f"Puzzle solved! Total nodes explored: {num_explored}. Solution: { ''.join(move_list) }")
+                else:
+                    print("Finished all puzzles.")
+                    quit()
             puzz.draw(screen)
             pygame.display.update()
     pygame.quit()
