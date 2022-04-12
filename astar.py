@@ -166,8 +166,6 @@ all_puzzles = [
     "130458726"
 ]
 
-start_state = "840156372"
-
 if __name__ == "__main__":
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
