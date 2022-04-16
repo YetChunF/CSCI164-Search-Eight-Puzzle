@@ -1,6 +1,7 @@
 import pygame
 import priority
 import math
+import sys
 
 SCREEN_HEIGHT = 500
 SCREEN_WIDTH =  500
@@ -114,7 +115,7 @@ class puzzle:
         return man_dist
 
 # A* Algorithm Implementation
-def astar(puzz: puzzle):
+def a_star(puzz: puzzle):
     curr_node = puzz.get_state()
     frontier = priority.PQ()
     frontier.push(curr_node, puzzle.ooph(curr_node, puzz.goal))
@@ -129,7 +130,13 @@ def astar(puzz: puzzle):
             print(f"Explored {num_explored} nodes...")
         explored.add(curr_node)
         if curr_node == puzz.goal:
-            return parent_map, num_explored
+            solution = []
+            _current = curr_node
+            while parent_map[_current] != "":
+                solution.append(parent_map[_current])
+                _current = puzzle.get_prev(_current, parent_map[_current])
+            solution.reverse()
+            return solution, num_explored
         for child_node, op in puzzle.get_neighbors(curr_node):
             path_costs[child_node] = path_costs[curr_node] + 1
             priority_cost = path_costs[child_node] + puzzle.manh(child_node, puzz.goal)
@@ -140,9 +147,67 @@ def astar(puzz: puzzle):
                 frontier.set_cost(child_node, priority_cost)
                 parent_map[child_node] = op
 
+# Iterative Deepening Depth First Search
+def iddfs(puzz: puzzle):
+    depth = 1
+    result = None
+    while not result:
+        result = ldfs(puzz.get_state(), puzz.goal, 0, depth)
+        if result:
+            return result
+        depth += 1
+        print(f"Increasing depth to {depth}")
+    return None
+
+# Limited DFS
+def ldfs(curr_node, goal_node, current_depth, max_depth):
+
+    if curr_node == goal_node:
+        print(f"Found goal node {curr_node} at depth {current_depth} with max depth {max_depth}")
+        return curr_node
+    if current_depth == max_depth:
+        return None
+    
+    for child_node, _ in puzzle.get_neighbors(curr_node):
+        result = ldfs(child_node, goal_node, current_depth + 1, max_depth)
+        if result:
+            return result
+    return None
+
 # Iterative Deepening A*
-def id_astar(puzz: puzzle):
-    pass
+def ida_star(puzz: puzzle):
+    bound = puzzle.manh(puzz.get_state(), puzz.goal)
+    path = [puzz.get_state()]
+    while True:
+        result = la_star(path, puzz.goal, 0, bound)
+        if result == "FOUND":
+            return path, bound
+        if result == math.inf:
+            return None
+        bound = result
+        print(f"Increasing bound to {bound}.")
+
+# Limited A* Search
+def la_star(path: list, goal_node: str, g, bound: float):
+    node = path[-1]
+    f = g + puzzle.manh(node, goal_node)
+    if f > bound:
+        return f
+    if node == goal_node:
+        print(f"Found goal node {node} at depth {g} with max depth {bound}")
+        return "FOUND"
+    m = math.inf
+    for child_node, _ in puzzle.get_neighbors(node):
+        if not child_node in path:
+            path.append(child_node)
+            result = la_star(path, goal_node, g + 1, bound)
+            if result == "FOUND":
+                return "FOUND"
+            if result < m:
+                m = result
+            path.pop()
+    return m
+
 
 small_puzzles = [
     "160273485",
@@ -183,6 +248,12 @@ four_board_hard = [
     "7DB13C52F46E80A9"
 ]
 
+sample_p = puzzle("462301587", "012345678")
+result, fbound = ida_star(sample_p)
+print(result)
+
+sys.exit()
+
 if __name__ == "__main__":
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -216,16 +287,11 @@ if __name__ == "__main__":
                     puzz = puzzle(new_start_state, new_end_state)
                     puzz.draw(screen)
                     pygame.display.update()
-                    pmap, num_explored = astar(puzz)
-                    curr = new_end_state
-                    while pmap[curr] != "":
-                        move_list.append(pmap[curr])
-                        curr = puzzle.get_prev(curr, pmap[curr])
-                    move_list.reverse()
-                    print(f"Puzzle solved! Total nodes explored: {num_explored}. Solution: { ''.join(move_list) }")
+                    move_list, num_explored = a_star(puzz)
+                    print(f"Puzzle solved! Total nodes explored: {num_explored}. Solution: {''.join(move_list)}")
                 else:
                     print("Finished all puzzles.")
-                    quit()
+                    sys.exit()
             puzz.draw(screen)
             pygame.display.update()
     pygame.quit()
