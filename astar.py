@@ -42,10 +42,10 @@ four_board_hard = [
 ]
 
 # A* Algorithm Implementation
-def a_star(puzz: puzzle):
-    curr_node = puzz.get_state()
+def a_star(start_state: str, goal_state: str):
+    curr_node = start_state
     frontier = priority.PQ()
-    frontier.push(curr_node, puzzle.ooph(curr_node, puzz.goal))
+    frontier.push(curr_node, puzzle.manh(curr_node, goal_state))
     parent_map = {curr_node: ""}
     path_costs = {curr_node: 0}
     explored = set()
@@ -56,7 +56,7 @@ def a_star(puzz: puzzle):
         if num_explored % 5000 == 0:
             print(f"Explored {num_explored} nodes...")
         explored.add(curr_node)
-        if curr_node == puzz.goal:
+        if curr_node == goal_state:
             solution = []
             _current = curr_node
             while parent_map[_current] != "":
@@ -67,7 +67,7 @@ def a_star(puzz: puzzle):
             return solution, num_explored
         for child_node, op in puzzle.get_neighbors(curr_node):
             path_costs[child_node] = path_costs[curr_node] + 1
-            priority_cost = path_costs[child_node] + puzzle.manh(child_node, puzz.goal)
+            priority_cost = path_costs[child_node] + puzzle.manh(child_node, goal_state)
             if (not child_node in explored) and (not frontier.is_in(child_node)):
                 frontier.push(child_node, priority_cost)
                 parent_map[child_node] = op
@@ -76,11 +76,11 @@ def a_star(puzz: puzzle):
                 parent_map[child_node] = op
 
 # Iterative Deepening Depth First Search
-def iddfs(puzz: puzzle):
+def iddfs(start_state: str, goal_state: str):
     depth = 1
     result = None
     while not result:
-        result = ldfs(puzz.get_state(), puzz.goal, 0, depth)
+        result = ldfs(start_state, goal_state, 0, depth)
         if result:
             return result
         depth += 1
@@ -103,11 +103,11 @@ def ldfs(curr_node, goal_node, current_depth, max_depth):
     return None
 
 # Iterative Deepening A*
-def ida_star(puzz: puzzle):
-    bound = puzzle.manh(puzz.get_state(), puzz.goal)
-    path = [puzz.get_state()]
+def ida_star(start_state: str, goal_state: str):
+    bound = puzzle.manh(start_state, goal_state)
+    path = [start_state]
     while True:
-        result = la_star(path, puzz.goal, 0, bound)
+        result = la_star(path, goal_state, 0, bound)
         if result == "FOUND":
             return path, bound
         if result == math.inf:
