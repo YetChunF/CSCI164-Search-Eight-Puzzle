@@ -1,4 +1,4 @@
-from puzzle import PuzzleState
+from Puzzle import PuzzleState
 from Actions import subNodes
 
 

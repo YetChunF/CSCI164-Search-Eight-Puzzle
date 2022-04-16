@@ -80,11 +80,12 @@ def main():
         result = IDDFS.iterative_deepening_depth_first_search(InitialState, GoalState, maxDepth)
 
         IDDFS.iterative_deepening_depth_first_search(InitialState, GoalState, 100)
-        iddfsNode = IDDFS.GoalNode
+        #iddfsNode = IDDFS.GoalNode
         iddfsMoves = []
+        print(result)
 
         if result:
-            while InitialState != iddfsNode.state:
+            while InitialState != result:
                 if iddfsNode.move == 1:
                     path = 'U'
                 if iddfsNode.move == 2:
@@ -108,3 +109,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

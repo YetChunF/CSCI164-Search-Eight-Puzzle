@@ -1,4 +1,4 @@
-from puzzle import PuzzleState
+from Puzzle import PuzzleState
 from Actions import subNodes
 
 
@@ -15,6 +15,7 @@ def depth_first_search_utils(state, goalState, depth):
         visited.add(node.map)
         if node.state == goalState:
             GoalNode = node
+            print(GoalNode.state)
             return stack
         elif depth < 0:
             continue
@@ -28,10 +29,12 @@ def depth_first_search_utils(state, goalState, depth):
                     visited.add(path.map)
         depth -= 1
 
+    return []
+
 
 def iterative_deepening_depth_first_search(state, goal, depth):
 
-    global GoalNode, numberOfNodes, node
+    global GoalNode, numberOfNodes
 
     # Repeatedly depth-limit search till the maximum depth
     for i in range(depth):
@@ -39,3 +42,6 @@ def iterative_deepening_depth_first_search(state, goal, depth):
         if result:
             return (result, GoalNode)
     return []
+
+
+iterative_deepening_depth_first_search([4,6,2,3,0,1,5,8,7],[0,1,2,3,4,5,6,7,8],10)
