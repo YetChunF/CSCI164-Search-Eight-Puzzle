@@ -1,5 +1,6 @@
 from animate import puzzle
 import priority
+import math
 
 small_puzzles = [
     "160273485",
