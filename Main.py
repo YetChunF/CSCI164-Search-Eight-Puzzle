@@ -3,19 +3,21 @@ import string
 import BFS
 import DFS
 import IDDFS
+import astar
 from puzzle import PuzzleState
 
 
 def main():
      
     GoalState = [0, 1, 2, 3, 4, 5, 6, 7, 8]
-    GoalState15 = ["1234567890ABCDEF"]
+    
+    GoalState2 = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
     
     #Obtain information from calling parameters
     parser = argparse.ArgumentParser()
     parser.add_argument('method')
     parser.add_argument('initialBoard')
-    args = parser.parse_args()
+    args = parser.parse_args() 
     data = args.initialBoard.split(",")
 
     #Build initial board state
@@ -101,9 +103,17 @@ def main():
             print("Path: ", iddfsMoves)
             print("Number of moves: ", len(iddfsMoves))
             print("Nodes expanded: ", nNode)
+    
+    elif(function == "astar"):
+        init_state = "".join([str(c) for c in InitialState])
+        goal_state = "".join(GoalState)
+        s, fbound = astar.ida_star(init_state, goal_state)
+        print (s)
+        
 
-        else:
-            print(node)
+    
+    else:
+        print(node)
 
 if __name__ == '__main__':
     main()
