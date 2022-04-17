@@ -53,4 +53,3 @@ def iterative_deepening_depth_first_search(state, goal, depth):
     return (fail, numberofNodes)
 
 
-iterative_deepening_depth_first_search([1,2,3,4,0,6,5,7,8],"0,1,2,3,4,5,6,7,8",10)
