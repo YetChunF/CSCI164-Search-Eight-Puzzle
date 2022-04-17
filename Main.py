@@ -8,7 +8,7 @@ from Puzzle import PuzzleState
 def main():
      
     GoalState = [0, 1, 2, 3, 4, 5, 6, 7, 8]
-
+    
     #Obtain information from calling parameters
     parser = argparse.ArgumentParser()
     parser.add_argument('method')
@@ -17,7 +17,7 @@ def main():
     data = args.initialBoard.split(",")
 
     #Build initial board state
-    InitialState = []
+    InitialState = [] #Take in 8 data 
     InitialState.append(int(data[0]))
     InitialState.append(int(data[1]))
     InitialState.append(int(data[2]))
@@ -49,9 +49,9 @@ def main():
             bfsNode = bfsNode.parent
 
         #Print results
-        print("path: ", bfsMoves)
-        print("cost: ", len(bfsMoves))
-        print("nodes expanded: ", BFS.numberOfPaths)
+        print("Path: ", bfsMoves)
+        print("Cost: ", len(bfsMoves))
+        print("Nodes expanded: ", BFS.numberOfPaths)
 
     elif(function == "dfs"):
         (node, nNode) = DFS.depth_first_search(InitialState, GoalState)

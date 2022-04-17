@@ -1,5 +1,3 @@
-from sys import breakpointhook
-from tkinter import Y
 from Puzzle import PuzzleState
 from Actions import subNodes
 import queue

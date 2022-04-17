@@ -3,12 +3,12 @@ from collections import deque
 from Actions import subNodes
 
 
-def breath_first_search(startState, goalState):
+def breath_first_search(initialState, goalState):
 
     global GoalNode, numberOfPaths
 
     boardVisited= set()
-    Queue = deque([PuzzleState(startState, None, None, 0, 0, 0)])
+    Queue = deque([PuzzleState(initialState, None, None, 0, 0, 0)])
     numberOfPaths = 0
 
     while Queue:
