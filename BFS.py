@@ -1,4 +1,4 @@
-from Puzzle import PuzzleState
+from puzzle import PuzzleState
 from collections import deque
 from Actions import subNodes
 

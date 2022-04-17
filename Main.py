@@ -1,13 +1,15 @@
 import argparse
+import string
 import BFS
 import DFS
 import IDDFS
-from Puzzle import PuzzleState
+from puzzle import PuzzleState
 
 
 def main():
      
     GoalState = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+    GoalState15 = ["1234567890ABCDEF"]
     
     #Obtain information from calling parameters
     parser = argparse.ArgumentParser()
@@ -50,7 +52,7 @@ def main():
 
         #Print results
         print("Path: ", bfsMoves)
-        print("Cost: ", len(bfsMoves))
+        print("Number of Moves: ", len(bfsMoves))
         print("Nodes expanded: ", BFS.numberOfPaths)
 
     elif(function == "dfs"):
