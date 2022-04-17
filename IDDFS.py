@@ -1,47 +1,56 @@
 from Puzzle import PuzzleState
 from Actions import subNodes
+import queue
 
 
-def depth_first_search_utils(state, goalState, depth):
+def depth_first_search(startState, goalState, maxDepth):
 
-    global GoalNode, numberOfNodes
-
+    node = PuzzleState(startState, None, None, 0, 0, 0)
+    # make a LIFO queue with infinite size
+    frontier = queue.LifoQueue(0)
+    frontier.put(node)
     numberOfNodes = 0
-    visited = set()
-    stack = list([PuzzleState(state, None, None, 0, 0, 0)])
+    # dictionary to set true to the visited node
+    # false to node that haven't been visited
+    visited = {}
 
-    while stack:
-        node = stack.pop()
-        visited.add(node.map)
+    while not frontier.empty():
+        # get the last element
+        node = frontier.get()
+        # convert the state to string
+        currentState = ''.join(str(v) for v in node.state)
+
+        # if the state is equal to goalState, return the results
         if node.state == goalState:
-            GoalNode = node
-            print(GoalNode.state)
-            return stack
-        elif depth < 0:
-            continue
-        else:
-            #inverse the order of next paths for execution porpuses
-            possiblePaths = reversed(subNodes(node))
-            numberOfNodes += 1
-            for path in possiblePaths:
-                if path.map not in visited:
-                    stack.append(path)
-                    visited.add(path.map)
-        depth -= 1
+            return (node, numberOfNodes)
 
-    return []
+        # don't expand node if the depth exceed maxDepth
+        elif node.depth + 1 > maxDepth:
+            continue
+
+        # put the current node into the dictionary and set it to True
+        # if the state have not been visited
+        elif not visited.get(currentState):
+            numberOfNodes += 1
+            visited[currentState] = True
+
+            # expand the node
+            for child in subNodes(node):
+                frontier.put(child)
+
+    return (0, numberOfNodes)
 
 
 def iterative_deepening_depth_first_search(state, goal, depth):
 
-    global GoalNode, numberOfNodes
+    fail = "Can't find the goal within the depth"
 
     # Repeatedly depth-limit search till the maximum depth
     for i in range(depth):
-        result = depth_first_search_utils(state, goal, i)
-        if result:
-            return (result, GoalNode)
-    return []
+        (node, numberofNodes) = depth_first_search(state, goal, i)
+        if (isinstance(node, PuzzleState)):
+            return (node, numberofNodes)
+    return (fail, numberofNodes)
 
 
-iterative_deepening_depth_first_search([4,6,2,3,0,1,5,8,7],[0,1,2,3,4,5,6,7,8],10)
+iterative_deepening_depth_first_search([1,2,3,4,0,6,5,7,8],"0,1,2,3,4,5,6,7,8",10)
