@@ -152,7 +152,7 @@ def run_animations(solutions: list):
             else:
                 if solutions:
                     states = solutions.pop(0)
-                    screen.blit(font.render(f"Solving puzzle: {states[0]}", True, FONT_COLOR), (5, 5))
+                    screen.blit(font.render(f"Solving puzzle: {states[0]}", True, (255, 255, 255)), (5, 5))
                 else:
                     print("Finished all puzzles.")
                     sys.exit()
