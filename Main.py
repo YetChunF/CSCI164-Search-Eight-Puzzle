@@ -2,6 +2,7 @@ import argparse
 import BFS
 import DFS
 import IDDFS
+from Puzzle import PuzzleState
 
 
 def main():
@@ -53,58 +54,55 @@ def main():
         print("Nodes expanded: ", BFS.numberOfPaths)
 
     elif(function == "dfs"):
-        DFS.depth_first_search(InitialState, GoalState)
+        (node, nNode) = DFS.depth_first_search(InitialState, GoalState)
 
-        dfsNode = DFS.GoalNode
+        # dfsNode = DFS.GoalNode
         dfsMoves = []
 
-        while InitialState != dfsNode.state:
-            if dfsNode.move == 1:
+        while InitialState != node.state:
+            if node.move == 1:
                 path = 'U'
-            if dfsNode.move == 2:
+            if node.move == 2:
                 path = 'D'
-            if dfsNode.move == 3:
+            if node.move == 3:
                 path = 'L'
-            if dfsNode.move == 4:
+            if node.move == 4:
                 path = 'R'
             dfsMoves.insert(0, path)
-            dfsNode = dfsNode.parent
+            node = node.parent
 
         #Print results.
         print("Path: ", dfsMoves)
-        print("Cost: ", len(dfsMoves))
-        print("Nodes Expanded: ", DFS.numberOfNodes)
+        print("Number of moves: ", len(dfsMoves))
+        print("Nodes expanded: ", nNode)
 
     elif(function == "iddfs"):
         maxDepth = 100
-        result = IDDFS.iterative_deepening_depth_first_search(InitialState, GoalState, maxDepth)
+        (node, nNode) = IDDFS.iterative_deepening_depth_first_search(InitialState, GoalState, maxDepth)
 
-        IDDFS.iterative_deepening_depth_first_search(InitialState, GoalState, 100)
-        iddfsNode = IDDFS.GoalNode
         iddfsMoves = []
 
-        if result:
-            while InitialState != iddfsNode.state:
-                if iddfsNode.move == 1:
+        if isinstance(node, PuzzleState):
+            while InitialState != node.state:
+                if node.move == 1:
                     path = 'U'
-                if iddfsNode.move == 2:
+                if node.move == 2:
                     path = 'D'
-                if iddfsNode.move == 3:
+                if node.move == 3:
                     path = 'L'
-                if iddfsNode.move == 4:
+                if node.move == 4:
                     path = 'R'
                 iddfsMoves.insert(0, path)
-                iddfsNode = iddfsNode.parent
+                node = node.parent
+
+            #Print results.
+            print("Path: ", iddfsMoves)
+            print("Number of moves: ", len(iddfsMoves))
+            print("Nodes expanded: ", nNode)
+
         else:
-            print("Can't find the goal state within the height of 100")
-
-        #Print results.
-        print("path: ", iddfsMoves)
-        print("cost: ", len(iddfsMoves))
-        print("nodes expanded: ", IDDFS.numberOfNodes)
-
-    # if(function=="ast"):
-    #     ast(InitialState) 
+            print(node)
 
 if __name__ == '__main__':
     main()
+
