@@ -56,7 +56,8 @@ def a_star(start_state: str, goal_state: str):
     num_explored = 0
     while frontier:
         frontier.sort(key=lambda obj: obj.priority)
-        curr_node = frontier.pop(0)
+        curr_node = min(frontier, key=lambda obj: obj.priority)
+        frontier.remove(curr_node)
         # print(f"Node: {curr_node.state} {curr_node.priority} {curr_node.path_cost}")
         num_explored += 1
         if num_explored % 5000 == 0:
@@ -140,8 +141,3 @@ def la_star(path: list, goal_node: str, g, bound: float):
                 m = result
             path.pop()
     return m
-
-# test
-
-s, n = a_star("16235A749C08DEBF", "0123456789ABCDEF")
-print(s)
