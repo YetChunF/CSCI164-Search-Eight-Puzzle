@@ -5,13 +5,9 @@ from pygame import init
 import BFS
 import DFS
 import IDDFS
-<<<<<<< HEAD
-from Puzzle import PuzzleState
-=======
 import astar
-from puzzle import PuzzleState
+from Puzzle import PuzzleState
 import animate
->>>>>>> 99ffbc8276bf1c69a08aecca52a1bed2c519dbc8
 
 
 def main():
