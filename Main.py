@@ -151,13 +151,15 @@ def main():
         init_state = "".join([str(c) for c in InitialState])
         goal_state = "".join([str(c) for c in GoalState])
         s, num_explored = astar.a_star(init_state, goal_state)
-        animate.run_animations([s])
+        # Puzzle Animation
+        animate.run_anim_moves(init_state, s)
     
     elif(function == "idastar"):
         init_state = "".join([str(c) for c in InitialState])
         goal_state = "".join([str(c) for c in GoalState])
         s, fbound = astar.ida_star(init_state, goal_state)
-        animate.run_animations([s])
+        print (s)
+        #animate.run_animations([s])
         
 
     
