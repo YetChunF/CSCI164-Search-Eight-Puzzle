@@ -159,3 +159,12 @@ def run_animations(solutions: list):
                     sys.exit()
             pygame.display.update()
     pygame.quit()
+
+def run_anim_moves(initial_state: str, move_list: list):
+    goal_state = "".join(sorted([c for c in initial_state]))
+    p = puzzle(initial_state, goal_state)
+    s = [p.get_state()]
+    for move in move_list:
+        p.move(move)
+        s.append(p.get_state())
+    run_animations([s])

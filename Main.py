@@ -1,10 +1,13 @@
 import argparse
 import string
+
+from pygame import init
 import BFS
 import DFS
 import IDDFS
 import astar
 from puzzle import PuzzleState
+import animate
 
 
 def main():
@@ -57,6 +60,10 @@ def main():
         print("Number of Moves: ", len(bfsMoves))
         print("Nodes expanded: ", BFS.numberOfPaths)
 
+        # Puzzle Animation
+        init_state = "".join([str(c) for c in InitialState])
+        animate.run_anim_moves(init_state, bfsMoves)
+
     elif(function == "dfs"):
         (node, nNode) = DFS.depth_first_search(InitialState, GoalState)
 
@@ -79,6 +86,10 @@ def main():
         print("Path: ", dfsMoves)
         print("Number of moves: ", len(dfsMoves))
         print("Nodes expanded: ", nNode)
+
+        # Puzzle Animation
+        init_state = "".join([str(c) for c in InitialState])
+        animate.run_anim_moves(init_state, dfsMoves)
 
     elif(function == "iddfs"):
         maxDepth = 100
@@ -103,18 +114,22 @@ def main():
             print("Path: ", iddfsMoves)
             print("Number of moves: ", len(iddfsMoves))
             print("Nodes expanded: ", nNode)
+
+            # Puzzle Animation
+            init_state = "".join([str(c) for c in InitialState])
+            animate.run_anim_moves(init_state, iddfsMoves)
     
     elif(function == "astar"):
         init_state = "".join([str(c) for c in InitialState])
         goal_state = "".join([str(c) for c in GoalState])
         s, num_explored = astar.a_star(init_state, goal_state)
-        print(s)
+        animate.run_animations([s])
     
     elif(function == "idastar"):
         init_state = "".join([str(c) for c in InitialState])
         goal_state = "".join([str(c) for c in GoalState])
         s, fbound = astar.ida_star(init_state, goal_state)
-        print(s)
+        animate.run_animations([s])
         
 
     
