@@ -103,7 +103,7 @@ def ldfs(curr_node, goal_node, current_depth, max_depth):
     return None
 
 # Iterative Deepening A*
-def ida_star(start_state: str, goal_state: str):
+def ida_star(start_state: str, goal_state: str, verbose:bool=False):
     bound = puzzle.manh(start_state, goal_state)
     path = [start_state]
     while True:
@@ -113,7 +113,8 @@ def ida_star(start_state: str, goal_state: str):
         if result == math.inf:
             return None
         bound = result
-        print(f"Increasing bound to {bound}.")
+        if verbose:
+            print(f"Increasing bound to {bound}.")
 
 # Limited A* Search
 def la_star(path: list, goal_node: str, g, bound: float):

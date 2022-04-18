@@ -1,21 +1,30 @@
 import argparse
 import string
+
+from pygame import init
 import BFS
 import DFS
 import IDDFS
+<<<<<<< HEAD
 from Puzzle import PuzzleState
+=======
+import astar
+from puzzle import PuzzleState
+import animate
+>>>>>>> 99ffbc8276bf1c69a08aecca52a1bed2c519dbc8
 
 
 def main():
      
     GoalState = [0, 1, 2, 3, 4, 5, 6, 7, 8]
-    GoalState15 = ["1234567890ABCDEF"]
+    
+    GoalState2 = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
     
     #Obtain information from calling parameters
     parser = argparse.ArgumentParser()
     parser.add_argument('method')
     parser.add_argument('initialBoard')
-    args = parser.parse_args()
+    args = parser.parse_args() 
     data = args.initialBoard.split(",")
 
     #Build initial board state
@@ -55,6 +64,10 @@ def main():
         print("Number of Moves: ", len(bfsMoves))
         print("Nodes expanded: ", BFS.numberOfPaths)
 
+        # Puzzle Animation
+        init_state = "".join([str(c) for c in InitialState])
+        animate.run_anim_moves(init_state, bfsMoves)
+
     elif(function == "dfs"):
         (node, nNode) = DFS.depth_first_search(InitialState, GoalState)
 
@@ -77,6 +90,10 @@ def main():
         print("Path: ", dfsMoves)
         print("Number of moves: ", len(dfsMoves))
         print("Nodes expanded: ", nNode)
+
+        # Puzzle Animation
+        init_state = "".join([str(c) for c in InitialState])
+        animate.run_anim_moves(init_state, dfsMoves)
 
     elif(function == "iddfs"):
         maxDepth = 100
@@ -102,8 +119,26 @@ def main():
             print("Number of moves: ", len(iddfsMoves))
             print("Nodes expanded: ", nNode)
 
-        else:
-            print(node)
+            # Puzzle Animation
+            init_state = "".join([str(c) for c in InitialState])
+            animate.run_anim_moves(init_state, iddfsMoves)
+    
+    elif(function == "astar"):
+        init_state = "".join([str(c) for c in InitialState])
+        goal_state = "".join([str(c) for c in GoalState])
+        s, num_explored = astar.a_star(init_state, goal_state)
+        animate.run_animations([s])
+    
+    elif(function == "idastar"):
+        init_state = "".join([str(c) for c in InitialState])
+        goal_state = "".join([str(c) for c in GoalState])
+        s, fbound = astar.ida_star(init_state, goal_state)
+        animate.run_animations([s])
+        
+
+    
+    else:
+        print(node)
 
 if __name__ == '__main__':
     main()
