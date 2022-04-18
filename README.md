@@ -14,7 +14,7 @@ The main command line tool should be used as shown below:
 python3 Main.py <algorithm> <state list>
 ```
 
-The algorithm can simply be any of the following values: `bfs, dfs, iddfs, astar, idastar`. The state list must be separated by commas and each tile must be one of the following characters: `"012345678ABCDEF"`. Here is an example:
+The algorithm can simply be any of the following values: `bfs, dfs, iddfs, astar, idastar`. The state list must be separated by commas and each tile must be one of the following characters: `"012345678"`. Here is an example:
 
 ```
 python3 Main.py astar 1,6,0,2,7,3,4,8,5
