@@ -125,7 +125,6 @@ class puzzle:
             tile_dest = goal.index(state[tile_source])
             dest_i, dest_j = int(tile_dest / boardSize), tile_dest % boardSize
             man_dist += math.sqrt((source_i - dest_i)**2 + (source_j - dest_j)**2)
-            print(f"{state[tile_source]}: {math.sqrt((source_i - dest_i)**2 + (source_j - dest_j)**2)}")
         return man_dist
 
 # Animation function. Simply provide a list containing lists of states.
