@@ -6,7 +6,7 @@ import BFS
 import DFS
 import IDDFS
 import astar
-from Puzzle import PuzzleState
+from puzzle import PuzzleState
 import animate
 
 
