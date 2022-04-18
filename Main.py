@@ -14,7 +14,7 @@ def main():
      
     GoalState = [0, 1, 2, 3, 4, 5, 6, 7, 8]
     
-    GoalState2 = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+    GoalStateLong = ["0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F"]
     
     #Obtain information from calling parameters
     parser = argparse.ArgumentParser()
@@ -130,7 +130,8 @@ def main():
         init_state = "".join([str(c) for c in InitialState])
         goal_state = "".join([str(c) for c in GoalState])
         s, fbound = astar.ida_star(init_state, goal_state)
-        animate.run_animations([s])
+        print (s)
+        #animate.run_animations([s])
         
 
     
