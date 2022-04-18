@@ -1,5 +1,7 @@
 from animate import puzzle
 import math
+import queue
+from dataclasses import dataclass, field
 
 small_puzzles = [
     "160273485",
@@ -40,10 +42,12 @@ four_board_hard = [
     "7DB13C52F46E80A9"
 ]
 
+@dataclass(order=True)
 class qnode:
     def __init__(self, state: float, priority: float=math.inf, p_op: str="N", p_cost: float=math.inf):
         self.state = state
-        self.priority = priority
+        self.item = field(compare=False)
+        self.priority:int = priority
         self.parent_op = p_op
         self.path_cost = p_cost
     def __eq__(self, __o: object) -> bool:
@@ -51,17 +55,17 @@ class qnode:
 
 # A* Algorithm Implementation
 def a_star(start_state: str, goal_state: str):
-    frontier = [qnode(start_state, puzzle.manh(start_state, goal_state), "", 0)]
+    frontier = queue.PriorityQueue()
+    frontier.put((0, 0, qnode(start_state, puzzle.manh(start_state, goal_state), "", 0)))
     explored = []
     num_explored = 0
-    while frontier:
-        curr_node = min(frontier, key=lambda obj: obj.priority)
-        frontier.remove(curr_node)
+    while not frontier.empty():
+        _, _, curr_node = frontier.get()
+        explored.append(curr_node)
         # print(f"Node: {curr_node.state} {curr_node.priority} {curr_node.path_cost}")
         num_explored += 1
         if num_explored % 5000 == 0:
             print(f"Explored {num_explored} nodes...")
-        explored.append(curr_node)
         if curr_node.state == goal_state:
             solution = []
             _current = curr_node
@@ -72,10 +76,9 @@ def a_star(start_state: str, goal_state: str):
             solution.reverse()
             return solution, num_explored
         for child_state, op in puzzle.get_neighbors(curr_node.state):
-            h = puzzle.manh(child_state, goal_state)
-            child_node = qnode(child_state, curr_node.path_cost + 1 + h, op, curr_node.path_cost + 1)
+            child_node = qnode(child_state, curr_node.path_cost + 1 + puzzle.manh(child_state, goal_state), op, curr_node.path_cost + 1)
             if (not child_node in explored):
-                frontier.append(child_node)
+                frontier.put((child_node.priority, child_node.path_cost, child_node))
 
 # Iterative Deepening Depth First Search
 def iddfs(start_state: str, goal_state: str):

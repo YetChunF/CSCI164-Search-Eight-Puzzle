@@ -2,7 +2,7 @@ import astar
 import animate
 
 solutions = []
-for p in astar.four_board_ez:
+for p in astar.small_puzzles:
     print(f"Solving {p}")
     goal_state = "".join(sorted([c for c in p]))
     sol, _ = astar.a_star(p, goal_state)
