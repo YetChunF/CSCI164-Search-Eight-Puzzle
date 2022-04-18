@@ -1,5 +1,4 @@
 from animate import puzzle
-import priority
 import math
 
 small_puzzles = [
@@ -41,39 +40,44 @@ four_board_hard = [
     "7DB13C52F46E80A9"
 ]
 
+class qnode:
+    def __init__(self, state: float, priority: float=math.inf, p_op: str="N", p_cost: float=math.inf):
+        self.state = state
+        self.priority = priority
+        self.parent_op = p_op
+        self.path_cost = p_cost
+    def __eq__(self, __o: object) -> bool:
+        return self.state == __o.state
+
 # A* Algorithm Implementation
 def a_star(start_state: str, goal_state: str):
-    curr_node = start_state
-    frontier = priority.PQ()
-    frontier.push(curr_node, puzzle.manh(curr_node, goal_state))
-    parent_map = {curr_node: ""}
-    path_costs = {curr_node: 0}
-    explored = set()
+    frontier = [qnode(start_state, puzzle.manh(start_state, goal_state), "", 0)]
+    explored = []
     num_explored = 0
-    while not frontier.is_mt():
-        curr_node, _ = frontier.pop()
+    while frontier:
+        frontier.sort(key=lambda obj: obj.priority)
+        curr_node = frontier.pop(0)
+        # print(f"Node: {curr_node.state} {curr_node.priority} {curr_node.path_cost}")
         num_explored += 1
         if num_explored % 5000 == 0:
             print(f"Explored {num_explored} nodes...")
-        explored.add(curr_node)
-        if curr_node == goal_state:
+        explored.append(curr_node)
+        if curr_node.state == goal_state:
             solution = []
             _current = curr_node
-            while parent_map[_current] != "":
-                solution.append(_current)
-                _current = puzzle.get_prev(_current, parent_map[_current])
-            solution.append(_current)
+            while _current.parent_op != "":
+                solution.append(_current.state)
+                _current = explored[explored.index(qnode(puzzle.get_prev(_current.state, _current.parent_op)))]
+            solution.append(_current.state)
             solution.reverse()
             return solution, num_explored
-        for child_node, op in puzzle.get_neighbors(curr_node):
-            path_costs[child_node] = path_costs[curr_node] + 1
-            priority_cost = path_costs[child_node] + puzzle.manh(child_node, goal_state)
-            if (not child_node in explored) and (not frontier.is_in(child_node)):
-                frontier.push(child_node, priority_cost)
-                parent_map[child_node] = op
-            elif (frontier.is_in(child_node)) and (frontier.get_cost(child_node) > priority_cost):
-                frontier.set_cost(child_node, priority_cost)
-                parent_map[child_node] = op
+        for child_state, op in puzzle.get_neighbors(curr_node.state):
+            h = puzzle.manh(child_state, goal_state)
+            child_node = qnode(child_state, curr_node.path_cost + 1 + h, op, curr_node.path_cost + 1)
+            if (not child_node in explored) and (not child_node in frontier):
+                frontier.append(child_node)
+            elif (child_node in frontier) and (frontier[frontier.index(child_node)].priority > child_node.priority):
+                frontier[frontier.index(child_node)].priority = child_node.priority
 
 # Iterative Deepening Depth First Search
 def iddfs(start_state: str, goal_state: str):
@@ -136,3 +140,8 @@ def la_star(path: list, goal_node: str, g, bound: float):
                 m = result
             path.pop()
     return m
+
+# test
+
+s, n = a_star("16235A749C08DEBF", "0123456789ABCDEF")
+print(s)
