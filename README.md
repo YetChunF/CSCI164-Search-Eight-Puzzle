@@ -1,5 +1,10 @@
 # CSCI164-Search-Eight-Puzzle
 
+## Requirements
+
+Requirements: MUST HAVE PYGAME INSTALLED. It's good practice to open up a virtual environment and use the
+requirements.txt file I've provided. If you're feeling dangerous, you can also just run `pip install -r requirements.txt` to simply install the correct pygame version globally. This is not recommended.
+
 ## Documentation
 
 ### Running different algorithms
@@ -10,7 +15,7 @@ The main command line tool should be used as shown below:
 python3 Main.py <algorithm> <state list>
 ```
 
-The algorithm can simple be any of the following values: `bfs, dfs, iddfs, astar, idastar`. The state list must be separated by commas and each tile must be one of the following characters: `"012345678ABCDEF"`. Here is an example:
+The algorithm can simply be any of the following values: `bfs, dfs, iddfs, astar, idastar`. The state list must be separated by commas and each tile must be one of the following characters: `"012345678ABCDEF"`. Here is an example:
 
 ```
 python3 Main.py astar 1,6,0,2,7,3,4,8,5
@@ -19,9 +24,6 @@ python3 Main.py astar 1,6,0,2,7,3,4,8,5
 The python command may vary depending on your OS. On Windows it may be `py`.
 
 ### Using the puzzle animation function
-
-Requirements: MUST HAVE PYGAME INSTALLED. Feel free to open up a virtual environment and use the
-requirements.txt file I've provided. If you're feeling dangerous, you can also just run `pip install -r requirements.txt` to simply install the correct pygame version globally. This is not recommended.
 
 Start by simply importing the animation library.
 ```python
