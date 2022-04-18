@@ -13,8 +13,8 @@ import animate
 def main():
      
     GoalState = [0, 1, 2, 3, 4, 5, 6, 7, 8]
-    
-    GoalState2 = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+    #---------- 15 Puzzles ----------#
+    # GoalStateLong = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"]
     
     #Obtain information from calling parameters
     parser = argparse.ArgumentParser()
@@ -35,14 +35,36 @@ def main():
     InitialState.append(int(data[7]))
     InitialState.append(int(data[8]))
 
+    #---------- 15 Puzzles ----------#
+    # InitialStateLong = [] #Take in 8 data 
+    # InitialStateLong.append(str(data[0]))
+    # InitialStateLong.append(str(data[1]))
+    # InitialStateLong.append(str(data[2]))
+    # InitialStateLong.append(str(data[3]))
+    # InitialStateLong.append(str(data[4]))
+    # InitialStateLong.append(str(data[5]))
+    # InitialStateLong.append(str(data[6]))
+    # InitialStateLong.append(str(data[7]))
+    # InitialStateLong.append(str(data[8]))
+    # InitialStateLong.append(str(data[9]))
+    # InitialStateLong.append(str(data[10]))
+    # InitialStateLong.append(str(data[11]))
+    # InitialStateLong.append(str(data[12]))
+    # InitialStateLong.append(str(data[13]))
+    # InitialStateLong.append(str(data[14]))
+    # InitialStateLong.append(str(data[15]))
+
     function = args.method
 
     if(function == "bfs"):
         BFS.breath_first_search(InitialState, GoalState)
+        #---------- 15 Puzzles ----------#
+        # BFS.breath_first_search(InitialStateLong, GoalStateLong)
 
         bfsNode = BFS.GoalNode
         bfsMoves = []
 
+        # while InitialStateLong != node.state:   # 15 Puzzles
         while InitialState != bfsNode.state:
             if bfsNode.move == 1:
                 path = 'U'
@@ -66,10 +88,13 @@ def main():
 
     elif(function == "dfs"):
         (node, nNode) = DFS.depth_first_search(InitialState, GoalState)
+        #---------- 15 Puzzles ----------#
+        # (node, nNode) = DFS.depth_first_search(InitialStateLong, GoalStateLong)
 
         # dfsNode = DFS.GoalNode
         dfsMoves = []
 
+        # while InitialStateLong != node.state:   # 15 Puzzles
         while InitialState != node.state:
             if node.move == 1:
                 path = 'U'
@@ -94,10 +119,13 @@ def main():
     elif(function == "iddfs"):
         maxDepth = 100
         (node, nNode) = IDDFS.iterative_deepening_depth_first_search(InitialState, GoalState, maxDepth)
+        #---------- 15 Puzzles ----------#
+        # (node, nNode) = IDDFS.iterative_deepening_depth_first_search(InitialStateLong, GoalStateLong, maxDepth)
 
         iddfsMoves = []
 
         if isinstance(node, PuzzleState):
+            # while InitialStateLong != node.state:   # 15 Puzzles
             while InitialState != node.state:
                 if node.move == 1:
                     path = 'U'
