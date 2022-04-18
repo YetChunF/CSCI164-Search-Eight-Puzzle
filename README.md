@@ -2,8 +2,7 @@
 
 ## Requirements
 
-Requirements: MUST HAVE PYGAME INSTALLED. It's good practice to open up a virtual environment and use the
-requirements.txt file I've provided. If you're feeling dangerous, you can also just run `pip install -r requirements.txt` to simply install the correct pygame version globally. This is not recommended.
+MUST HAVE PYGAME INSTALLED. It's good practice to open up a virtual environment and use the requirements.txt file I've provided. If you're feeling dangerous, you can also just run `pip install -r requirements.txt` to simply install the correct pygame version globally. This is not recommended.
 
 ## Documentation
 
