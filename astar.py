@@ -70,9 +70,8 @@ def a_star(start_state: str, goal_state: str):
             solution = []
             _current = curr_node
             while _current.parent_op != "":
-                solution.append(_current.state)
+                solution.append(_current.parent_op)
                 _current = explored[explored.index(qnode(puzzle.get_prev(_current.state, _current.parent_op)))]
-            solution.append(_current.state)
             solution.reverse()
             return solution, num_explored
         for child_state, op in puzzle.get_neighbors(curr_node.state):
