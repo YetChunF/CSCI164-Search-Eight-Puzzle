@@ -75,10 +75,8 @@ def a_star(start_state: str, goal_state: str):
         for child_state, op in puzzle.get_neighbors(curr_node.state):
             h = puzzle.manh(child_state, goal_state)
             child_node = qnode(child_state, curr_node.path_cost + 1 + h, op, curr_node.path_cost + 1)
-            if (not child_node in explored) and (not child_node in frontier):
+            if (not child_node in explored):
                 frontier.append(child_node)
-            elif (child_node in frontier) and (frontier[frontier.index(child_node)].priority > child_node.priority):
-                frontier[frontier.index(child_node)].priority = child_node.priority
 
 # Iterative Deepening Depth First Search
 def iddfs(start_state: str, goal_state: str):
