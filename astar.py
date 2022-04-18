@@ -55,7 +55,6 @@ def a_star(start_state: str, goal_state: str):
     explored = []
     num_explored = 0
     while frontier:
-        frontier.sort(key=lambda obj: obj.priority)
         curr_node = min(frontier, key=lambda obj: obj.priority)
         frontier.remove(curr_node)
         # print(f"Node: {curr_node.state} {curr_node.priority} {curr_node.path_cost}")
