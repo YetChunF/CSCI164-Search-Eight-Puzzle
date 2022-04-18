@@ -3,7 +3,7 @@ import string
 import BFS
 import DFS
 import IDDFS
-from puzzle import PuzzleState
+from Puzzle import PuzzleState
 
 
 def main():

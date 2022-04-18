@@ -1,4 +1,4 @@
-from puzzle import PuzzleState
+from Puzzle import PuzzleState
 
 
 def subNodes(node):
