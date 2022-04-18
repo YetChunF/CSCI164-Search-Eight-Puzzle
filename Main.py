@@ -123,6 +123,7 @@ def main():
         init_state = "".join([str(c) for c in InitialState])
         goal_state = "".join([str(c) for c in GoalState])
         s, num_explored = astar.a_star(init_state, goal_state)
+        print (s)
         # Puzzle Animation
         animate.run_anim_moves(init_state, s)
     
