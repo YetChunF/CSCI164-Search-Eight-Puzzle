@@ -1,10 +1,11 @@
 import astar
-import animate
 
-f = open(f"solutions/eight-puzzle-solutions.txt", "w")
+to_solve = ['865102473', '632754180', '140386527', '142607358']
+
+f = open(f"solutions/hard-eight-solutions.txt", "w")
 
 solutions = []
-for p in astar.small_puzzles:
+for p in to_solve:
     print(f"Solving {p}")
     goal_state = "".join(sorted([c for c in p]))
     sol, _ = astar.a_star(p, goal_state)
