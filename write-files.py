@@ -1,12 +1,26 @@
 import astar
 import time
+from animate import puzzle
+import random
 
-to_solve = ['865102473', '632754180', '140386527', '142607358']
+NUM_PUZZLES = 10
+NUM_SHUFFLES = 1000000
+INITIAL_STATE = "012345678"
+
+moves = "ULDR"
+all_puzzles = []
+for _ in range(NUM_PUZZLES):
+    state = INITIAL_STATE
+    for _ in range(NUM_SHUFFLES):
+        neighbors = puzzle.get_neighbors(state)
+        state, op = neighbors[random.randrange(0, len(neighbors))]
+    all_puzzles.append(state)
+print(all_puzzles)
 
 f = open(f"solutions/hard-eight-solutions.txt", "w")
 
 solutions = []
-for p in to_solve:
+for p in all_puzzles:
     print(f"Solving {p}")
     goal_state = "".join(sorted([c for c in p]))
     current_time = time.time()
