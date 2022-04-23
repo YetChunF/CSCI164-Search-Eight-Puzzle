@@ -12,6 +12,7 @@ TILE_SIZE = 70
 FRAME_RATE = 200
 
 class puzzle:
+    board_size = 3
     def __init__(self, initial_state: str, goal_state: str) -> None:
         self.state = [c for c in initial_state]
         self.goal = goal_state
@@ -62,11 +63,13 @@ class puzzle:
                 tile.blit(font.render(self.state[tile_index], True, FONT_COLOR), (5, 5))
             screen.blit(tile, (BOARD_PADDING + j * TILE_SIZE, BOARD_PADDING + i * TILE_SIZE))
     @staticmethod
-    def draw_state(state: str, screen: pygame.Surface) -> None:
-        boardSize = int(math.sqrt(len(state)))
+    def set_board_size(new_size):
+        puzzle.board_size = new_size
+    @staticmethod
+    def draw_state(state: list, screen: pygame.Surface) -> None:
         for tile_index in range(len(state)):
-            i = int(tile_index / boardSize)
-            j = tile_index % boardSize
+            i = int(tile_index / puzzle.board_size)
+            j = tile_index % puzzle.board_size
             tile = pygame.Surface((TILE_SIZE, TILE_SIZE))
             tile.fill(TILE_COLOR)
             pygame.draw.rect(tile, FONT_COLOR, (0, 0, TILE_SIZE, TILE_SIZE), 1)
@@ -76,54 +79,51 @@ class puzzle:
             screen.blit(tile, (BOARD_PADDING + j * TILE_SIZE, BOARD_PADDING + i * TILE_SIZE))
     # Gets all neighbors for a specified state.
     @staticmethod
-    def get_neighbors(state: str):
+    def get_neighbors(state: list):
         space_pos = state.index("0")
-        boardSize = int((len(state))**(1/2))
         possible_states = []
-        if space_pos + boardSize < len(state):
-            new_state = [c for c in state]
-            (new_state[space_pos], new_state[space_pos + boardSize]) = (new_state[space_pos + boardSize], new_state[space_pos])
-            possible_states.append(("".join(new_state), "D"))
-        if space_pos - boardSize >= 0:
-            new_state = [c for c in state]
-            (new_state[space_pos], new_state[space_pos - boardSize]) = (new_state[space_pos - boardSize], new_state[space_pos])
-            possible_states.append(("".join(new_state), "U"))
-        if space_pos % boardSize < boardSize - 1:
-            new_state = [c for c in state]
+        if space_pos + puzzle.board_size < len(state):
+            new_state = state[:]
+            (new_state[space_pos], new_state[space_pos + puzzle.board_size]) = (new_state[space_pos + puzzle.board_size], new_state[space_pos])
+            possible_states.append((new_state, "D"))
+        if space_pos - puzzle.board_size >= 0:
+            new_state = state[:]
+            (new_state[space_pos], new_state[space_pos - puzzle.board_size]) = (new_state[space_pos - puzzle.board_size], new_state[space_pos])
+            possible_states.append((new_state, "U"))
+        if space_pos % puzzle.board_size < puzzle.board_size - 1:
+            new_state = state[:]
             (new_state[space_pos], new_state[space_pos + 1]) = (new_state[space_pos + 1], new_state[space_pos])
-            possible_states.append(("".join(new_state), "R"))
-        if space_pos % boardSize > 0:
-            new_state = [c for c in state]
+            possible_states.append((new_state, "R"))
+        if space_pos % puzzle.board_size > 0:
+            new_state = state[:]
             (new_state[space_pos], new_state[space_pos - 1]) = (new_state[space_pos - 1], new_state[space_pos])
-            possible_states.append(("".join(new_state), "L"))
+            possible_states.append((new_state, "L"))
         return possible_states
         # Gets all neighbors for a specified state.
     @staticmethod
-    def get_prev(state: str, choice: str):
+    def get_prev(state: list, choice: str):
         space_pos = state.index("0")
-        boardSize = int((len(state))**(1/2))
-        new_state = [c for c in state]
-        if (choice == "U") and (space_pos + boardSize < len(state)):
-            (new_state[space_pos], new_state[space_pos + boardSize]) = (new_state[space_pos + boardSize], new_state[space_pos])
-        if (choice == "D") and (space_pos - boardSize >= 0):
-            (new_state[space_pos], new_state[space_pos - boardSize]) = (new_state[space_pos - boardSize], new_state[space_pos])
-        if (choice == "L") and (space_pos % boardSize < boardSize - 1):
+        new_state = state[:]
+        if (choice == "U") and (space_pos + puzzle.board_size < len(state)):
+            (new_state[space_pos], new_state[space_pos + puzzle.board_size]) = (new_state[space_pos + puzzle.board_size], new_state[space_pos])
+        if (choice == "D") and (space_pos - puzzle.board_size >= 0):
+            (new_state[space_pos], new_state[space_pos - puzzle.board_size]) = (new_state[space_pos - puzzle.board_size], new_state[space_pos])
+        if (choice == "L") and (space_pos % puzzle.board_size < puzzle.board_size - 1):
             (new_state[space_pos], new_state[space_pos + 1]) = (new_state[space_pos + 1], new_state[space_pos])
-        if (choice == "R") and (space_pos % boardSize > 0):
+        if (choice == "R") and (space_pos % puzzle.board_size > 0):
             (new_state[space_pos], new_state[space_pos - 1]) = (new_state[space_pos - 1], new_state[space_pos])
-        return "".join(new_state)
+        return new_state
     # Calculates the out of place heuristic function.
     @staticmethod
-    def ooph(state: str, goal: str) -> int:
+    def ooph(state: list, goal: str) -> int:
         return sum(list(map(lambda a, b: int(a==b), state, goal)))
     @staticmethod
-    def manh(state: str, goal: str) -> float:
-        boardSize = int((len(state))**(1/2))
+    def manh(state: list, goal: str) -> float:
         man_dist = 0
         for tile_source in range(len(state)):
-            source_i, source_j = int(tile_source / boardSize), tile_source % boardSize
+            source_i, source_j = int(tile_source / puzzle.board_size), tile_source % puzzle.board_size
             tile_dest = goal.index(state[tile_source])
-            dest_i, dest_j = int(tile_dest / boardSize), tile_dest % boardSize
+            dest_i, dest_j = int(tile_dest / puzzle.board_size), tile_dest % puzzle.board_size
             man_dist += math.sqrt((source_i - dest_i)**2 + (source_j - dest_j)**2)
         return man_dist
 

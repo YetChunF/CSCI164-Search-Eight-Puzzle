@@ -44,7 +44,7 @@ four_board_hard = [
 
 @dataclass(order=True)
 class qnode:
-    def __init__(self, state: float, priority: float=math.inf, p_op: str="N", p_cost: float=math.inf):
+    def __init__(self, state, priority: float=math.inf, p_op: str="N", p_cost: float=math.inf):
         self.state = state
         self.item = field(compare=False)
         self.priority:int = priority
@@ -54,7 +54,7 @@ class qnode:
         return self.state == __o.state
 
 # A* Algorithm Implementation
-def a_star(start_state: str, goal_state: str):
+def a_star(start_state: list, goal_state: list):
     frontier = queue.PriorityQueue()
     frontier.put((0, 0, qnode(start_state, puzzle.manh(start_state, goal_state), "", 0)))
     explored = []
@@ -79,35 +79,8 @@ def a_star(start_state: str, goal_state: str):
             if (not child_node in explored):
                 frontier.put((child_node.priority, child_node.path_cost, child_node))
 
-# Iterative Deepening Depth First Search
-def iddfs(start_state: str, goal_state: str):
-    depth = 1
-    result = None
-    while not result:
-        result = ldfs(start_state, goal_state, 0, depth)
-        if result:
-            return result
-        depth += 1
-        print(f"Increasing depth to {depth}")
-    return None
-
-# Limited DFS
-def ldfs(curr_node, goal_node, current_depth, max_depth):
-
-    if curr_node == goal_node:
-        print(f"Found goal node {curr_node} at depth {current_depth} with max depth {max_depth}")
-        return curr_node
-    if current_depth == max_depth:
-        return None
-    
-    for child_node, _ in puzzle.get_neighbors(curr_node):
-        result = ldfs(child_node, goal_node, current_depth + 1, max_depth)
-        if result:
-            return result
-    return None
-
 # Iterative Deepening A*
-def ida_star(start_state: str, goal_state: str, verbose:bool=False):
+def ida_star(start_state: list, goal_state: list, verbose:bool=False):
     bound = puzzle.manh(start_state, goal_state)
     path = [start_state]
     while True:
@@ -121,7 +94,7 @@ def ida_star(start_state: str, goal_state: str, verbose:bool=False):
             print(f"Increasing bound to {bound}.")
 
 # Limited A* Search
-def la_star(path: list, goal_node: str, g, bound: float):
+def la_star(path: list, goal_node: list, g, bound: float):
     node = path[-1]
     f = g + puzzle.manh(node, goal_node)
     if f > bound:

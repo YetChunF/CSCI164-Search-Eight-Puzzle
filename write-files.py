@@ -2,18 +2,19 @@ import astar
 import time
 from animate import puzzle
 import animate
-import random
 
-all_puzzles = ["237416B8590CDAEF"]
+all_puzzles = ["4123875BA906CDEF"]
 
 f = open(f"solutions/others-fifteen-solutions.txt", "w")
 
 solutions = []
 for p in all_puzzles:
-    goal_state = "".join(sorted([c for c in p]))
-    print(f"Puzzle: {p} Solution: {goal_state}")
+    init_state = [c for c in p]
+    goal_state = sorted(init_state)
+    puzzle.set_board_size(int((len(init_state))**(1/2)))
+    print(f"Puzzle: {p} Solution: {''.join(goal_state)}")
     current_time = time.time()
-    sol, _ = astar.a_star(p, goal_state)
+    sol, _ = astar.a_star(init_state, goal_state)
     time_elapsed = time.time() - current_time
     print(f"Solution: {sol}")
     animate.run_anim_moves(p, sol)
