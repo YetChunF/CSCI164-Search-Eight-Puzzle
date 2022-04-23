@@ -4,14 +4,14 @@ from animate import puzzle
 import animate
 import random
 
-all_puzzles = ["123456780FAB9CDE"]
+all_puzzles = ["237416B8590CDAEF"]
 
 f = open(f"solutions/others-fifteen-solutions.txt", "w")
 
 solutions = []
 for p in all_puzzles:
-    print(f"Solving {p}")
     goal_state = "".join(sorted([c for c in p]))
+    print(f"Puzzle: {p} Solution: {goal_state}")
     current_time = time.time()
     sol, _ = astar.a_star(p, goal_state)
     time_elapsed = time.time() - current_time
