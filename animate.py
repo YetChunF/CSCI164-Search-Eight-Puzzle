@@ -79,7 +79,7 @@ class puzzle:
             screen.blit(tile, (BOARD_PADDING + j * TILE_SIZE, BOARD_PADDING + i * TILE_SIZE))
     # Gets all neighbors for a specified state.
     @staticmethod
-    def get_neighbors(state: list):
+    def get_neighbors(state: list) -> list:
         space_pos = state.index("0")
         possible_states = []
         if space_pos + puzzle.board_size < len(state):

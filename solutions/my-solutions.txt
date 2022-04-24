@@ -1,0 +1,5 @@
+Puzzle: 120453786 Time: 0.0s Solution: DD
+Puzzle: 123576048 Time: 0.0s Solution: RULDRR
+Puzzle: 123706548 Time: 0.0s Solution: DLURDR
+Puzzle: 130426758 Time: 0.0s Solution: LDDR
+Puzzle: 123405786 Time: 0.0s Solution: RD

@@ -1,38 +1,39 @@
 import astar
 import time
 from animate import puzzle
-import animate
 import random
 
-NUM_PUZZLES = 10
-NUM_SHUFFLES = 50
-INITIAL_STATE = "0123456789ABCDEF"
+# Constants
 
+NUM_PUZZLES = 5
+NUM_SHUFFLES = 10
+INITIAL_STATE = "123456780"
+SAVE_FILE_NAME = "my-solutions.txt"
+
+# MAIN
+
+puzzle.set_board_size(int((len(INITIAL_STATE))**(1/2)))
+initial_state = [c for c in INITIAL_STATE]
 moves = "ULDR"
 all_puzzles = []
 for _ in range(NUM_PUZZLES):
-    state = INITIAL_STATE
+    state = initial_state[:]
     for _ in range(NUM_SHUFFLES):
         neighbors = puzzle.get_neighbors(state)
         state, op = neighbors[random.randrange(0, len(neighbors))]
     all_puzzles.append(state)
-print(all_puzzles)
 
-f = open(f"solutions/hard-eight-solutions.txt", "w")
+f = open(f"solutions/{SAVE_FILE_NAME}", "w")
 
 solutions = []
 for p in all_puzzles:
-    print(f"Solving {p}")
-    goal_state = "".join(sorted([c for c in p]))
+    p_str = ''.join(p)
+    print(f"Solving {p_str}")
+    goal_state = initial_state[:]
     current_time = time.time()
-    sol, _ = astar.a_star(p, goal_state)
+    sol, n = astar.a_star(p, goal_state)
     time_elapsed = time.time() - current_time
-    print(f"Solution: {sol}")
-    animate.run_anim_moves(p, sol)
-
-    f.write(f"Puzzle: {p} Time: {round(time_elapsed, 2)}s Solution: ")
-    for state in sol:
-        f.write(f"{state}")
-    f.write("\n")
+    print(f"Puzzle: {p_str} Time: {round(time_elapsed, 2)}s Solution: {''.join(sol)}\n")
+    f.write(f"Puzzle: {p_str} Time: {round(time_elapsed, 2)}s Solution: {''.join(sol)}\n")
 
 f.close()
